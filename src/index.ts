@@ -3,8 +3,6 @@ import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 import { createServer } from "http";
 import { robinhoodChainPlugin } from "./plugins/robinhood-chain.js";
-// @ts-ignore - plugin-sql has type resolution issues with bundler moduleResolution
-import sqlPlugin from "@elizaos/plugin-sql";
 
 // ─── Bulletproof health server (catecoin-scanner pattern) ───────────────
 // Container MUST NOT exit on Akash. /health lets the provider probe liveness.
@@ -59,7 +57,7 @@ async function startAgent(): Promise<void> {
 
   const runtime = new AgentRuntime({
     character,
-    plugins: [sqlPlugin, robinhoodChainPlugin],
+    plugins: [robinhoodChainPlugin],
     settings: {},
   });
 
