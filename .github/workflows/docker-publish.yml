@@ -1,0 +1,48 @@
+# Build and push Docker image to GitHub Container Registry (GHCR)
+# Triggers on push to main and manual dispatch.
+#
+# Lessons learned from catecoin-scanner deployments:
+# - GHCR login can timeout transiently with "net/http: timeout awaiting response headers".
+#   If this happens, push an empty commit to re-trigger: git commit --allow-empty -m "ci: re-trigger".
+# - Package visibility defaults to PRIVATE. After the first successful push, go to
+#   GitHub > your profile > Packages > robinhood-eliza-agent > Package settings > Change visibility to PUBLIC.
+#   Akash providers (and other external pulls) require public packages.
+# - Tag format below is `sha-<full-40char-commit>` (e.g. sha-a1b2c3d...).
+#   GitHub Actions metadata-action produces `sha-<7char>` format, but this workflow uses the explicit
+#   github.sha variable per project convention.
+
+name: Build and Push to GHCR
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # GHCR login uses the auto-provided GITHUB_TOKEN. No external secret needed.
+      # NOTE: This step can fail transiently with a timeout. Re-run the workflow or push
+      # an empty commit if this happens.
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:sha-${{ github.sha }}

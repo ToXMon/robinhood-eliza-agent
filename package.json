@@ -1,0 +1,31 @@
+{
+  "name": "robinhood-eliza-agent",
+  "version": "1.0.0",
+  "description": "Autonomous trading agent for Robinhood Chain memecoins using ElizaOS",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test:testnet": "tsx scripts/testnet-verify.ts",
+    "test:health": "tsx scripts/test-health.ts"
+  },
+  "dependencies": {
+    "@elizaos/core": "1.7.2",
+    "@elizaos/plugin-evm": "1.0.13",
+    "@elizaos/plugin-sql": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.0"
+  },
+  "devDependencies": {
+    "@elizaos/cli": "1.7.2",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

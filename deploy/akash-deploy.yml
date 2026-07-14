@@ -1,0 +1,72 @@
+# Akash SDL for Robinhood Eliza Trading Agent
+# Robinhood Chain (Arbitrum Orbit L2, chain ID 4663)
+#
+# IMAGE SHA REPLACEMENT (required before first deploy):
+#   This file uses `sha-PLACEHOLDER_SHA` as a placeholder image tag.
+#   After GitHub Actions CI runs on a push to main, do the following:
+#     1. Find the new 7-char commit SHA prefix. Easiest method:
+#          gh api repos/ToXMon/robinhood-eliza-agent/actions/runs \
+#            --jq '.workflow_runs[] | select(.conclusion=="success") | .head_sha[:7]' | head -1
+#        Or check the GHCR package page:
+#          https://github.com/ToXMon/robinhood-eliza-agent/pkgs/container/robinhood-eliza-agent
+#     2. Replace `PLACEHOLDER_SHA` with that 7-char prefix (e.g., sha-a1b2c3d).
+#     3. Verify the image is public on GHCR before deploying:
+#          TOKEN=$(curl -s 'https://ghcr.io/token?scope=repository:toxmon/robinhood-eliza-agent:pull' | jq -r .token)
+#          curl -s -o /dev/null -w '%{http_code}\n' \
+#            "https://ghcr.io/v2/toxmon/robinhood-eliza-agent/manifests/sha-a1b2c3d" \
+#            -H "Authorization: Bearer $TOKEN" \
+#            -H 'Accept: application/vnd.oci.image.manifest.v1+json'
+#        Expect HTTP 200.
+#     4. Deploy via ./deploy/deploy-to-akash.sh
+#
+# SECRET INJECTION (NO hardcoded secrets in this file):
+#   Every secret env var below has an EMPTY value. Inject real values at deploy time via:
+#     - Akash Console UI: "Environment Variables" panel during deployment, OR
+#     - provider-services tx deployment create (override via separate manifest workflow)
+#
+# CRITICAL RULES (do not modify without consulting akash-deploy-workflow skill):
+#   - Payment denom MUST be `uact` (BME model since Mainnet-17), NOT `uakt`.
+#   - Image tag MUST be `sha-XXXXXXX` format. NEVER use `:latest` or unpinned tags.
+#   - Do NOT add `signedBy` unless explicitly required for attribute filtering.
+---
+version: "2.0"
+
+services:
+  agent:
+    image: ghcr.io/toxmon/robinhood-eliza-agent:sha-PLACEHOLDER_SHA
+    env:
+      - CHAIN_ID=4663
+      - ALCHEMY_API_KEY=
+      - PRIVATE_KEY=
+      - SCAN_INTERVAL_MS=60000
+      - TELEGRAM_BOT_TOKEN=
+      - TELEGRAM_CHAT_ID=
+    expose:
+      - port: 8080
+        as: 80
+        to:
+          - global: true
+
+profiles:
+  compute:
+    agent:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 512Mi
+        storage:
+          size: 1Gi
+
+  placement:
+    akash:
+      pricing:
+        agent:
+          denom: uact
+          amount: 1000
+
+deployment:
+  agent:
+    akash:
+      profile: agent
+      count: 1

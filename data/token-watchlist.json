@@ -1,0 +1,7 @@
+[
+  {"address": "0x020bfC650A365f8BB26819deAAbF3E21291018b4", "name": "CASHCAT", "priority": "high"},
+  {"address": "0xd7321801caae694090694ff55a9323139f043b88", "name": "JUGGERNAUT", "priority": "medium"},
+  {"address": "0x79Fe86b963255Ce884bdcaC6388C50a599Ba277f", "name": "ROBINHOOD", "priority": "medium"},
+  {"address": "0xfDBb27E971E72E38C41b1C772FB409C94dd92789", "name": "VLAD", "priority": "low"},
+  {"address": "0x5266eeafF092D6136AB63D18B975A60a0Cc0C8f7", "name": "REPE", "priority": "low"}
+]

@@ -1,0 +1,28 @@
+# TypeScript type checking on pull requests to main.
+# Uses --ignore-scripts to skip postinstall scripts (supply-chain hygiene).
+
+name: Typecheck
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Typecheck
+        run: npm run typecheck
