@@ -33,7 +33,7 @@ version: "2.0"
 
 services:
   agent:
-    image: ghcr.io/toxmon/robinhood-eliza-agent:sha-4325a7acaa787c71214ebf882c3dfa550da596e2
+    image: ghcr.io/toxmon/robinhood-eliza-agent:sha-a5817c97040b1a70299085841365bbc0a9fd9d52
     env:
       - CHAIN_ID=4663
       - ALCHEMY_API_KEY=
