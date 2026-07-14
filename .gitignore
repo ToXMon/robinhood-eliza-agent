@@ -5,3 +5,5 @@ state/
 logs/
 *.log
 .DS_Store
+.eliza/
+dist/
